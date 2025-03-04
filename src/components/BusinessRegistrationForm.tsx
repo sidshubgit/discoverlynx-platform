@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Button } from '@/components/ui/button';
+import { useToast } from '@/components/ui/use-toast';
 
 interface BusinessFormData {
   name: string;
@@ -19,9 +20,15 @@ interface BusinessFormData {
 interface BusinessRegistrationFormProps {
   onSave: (businessData: BusinessFormData) => void;
   isLoading: boolean;
+  isRegistrationFlow?: boolean;
 }
 
-const BusinessRegistrationForm: React.FC<BusinessRegistrationFormProps> = ({ onSave, isLoading }) => {
+const BusinessRegistrationForm: React.FC<BusinessRegistrationFormProps> = ({ 
+  onSave, 
+  isLoading,
+  isRegistrationFlow = false 
+}) => {
+  const { toast } = useToast();
   const [businessData, setBusinessData] = useState<BusinessFormData>({
     name: '',
     description: '',
@@ -31,6 +38,13 @@ const BusinessRegistrationForm: React.FC<BusinessRegistrationFormProps> = ({ onS
     phone: '',
     isPrivate: false,
   });
+
+  useEffect(() => {
+    // Update parent component whenever business data changes
+    if (businessData) {
+      onSave(businessData);
+    }
+  }, [businessData, onSave]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -47,9 +61,47 @@ const BusinessRegistrationForm: React.FC<BusinessRegistrationFormProps> = ({ onS
     }));
   };
 
+  const validateForm = () => {
+    if (!businessData.name.trim()) {
+      toast({
+        title: "Missing field",
+        description: "Please enter a business name",
+        variant: "destructive",
+      });
+      return false;
+    }
+    if (!businessData.description.trim()) {
+      toast({
+        title: "Missing field",
+        description: "Please enter a business description",
+        variant: "destructive",
+      });
+      return false;
+    }
+    if (!businessData.category.trim()) {
+      toast({
+        title: "Missing field",
+        description: "Please enter a business category",
+        variant: "destructive",
+      });
+      return false;
+    }
+    if (!businessData.location.trim()) {
+      toast({
+        title: "Missing field",
+        description: "Please enter a business location",
+        variant: "destructive",
+      });
+      return false;
+    }
+    return true;
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSave(businessData);
+    if (validateForm()) {
+      onSave(businessData);
+    }
   };
 
   return (
@@ -161,10 +213,6 @@ const BusinessRegistrationForm: React.FC<BusinessRegistrationFormProps> = ({ onS
                 </div>
               </RadioGroup>
             </div>
-
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? "Adding Business..." : "Add Business"}
-            </Button>
           </div>
         </CardContent>
       </Card>

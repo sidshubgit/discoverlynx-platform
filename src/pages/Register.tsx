@@ -69,10 +69,10 @@ const Register = () => {
       return;
     }
     
-    if (addBusiness && !businessData) {
+    if (addBusiness && (!businessData || !businessData.name || !businessData.description || !businessData.category || !businessData.location)) {
       toast({
         title: "Missing business information",
-        description: "Please fill in your business details",
+        description: "Please fill in all required business fields",
         variant: "destructive",
       });
       return;
@@ -113,6 +113,12 @@ const Register = () => {
 
   const handleBusinessDataSave = (data: BusinessData) => {
     setBusinessData(data);
+  };
+
+  const handlePrevStep = () => {
+    if (step > 1) {
+      setStep(step - 1);
+    }
   };
 
   return (
@@ -202,35 +208,43 @@ const Register = () => {
             </Card>
           ) : (
             <>
-              {addBusiness ? (
+              {addBusiness && (
                 <div className="space-y-4">
                   <BusinessRegistrationForm
                     onSave={handleBusinessDataSave}
                     isLoading={isLoading}
+                    isRegistrationFlow={true}
                   />
-                  <div className="flex space-x-4">
-                    <Button 
-                      type="button" 
-                      variant="outline" 
-                      className="flex-1"
-                      onClick={() => setStep(1)}
+                  <div className="flex justify-between space-x-4">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={handlePrevStep}
                       disabled={isLoading}
                     >
                       Back
                     </Button>
-                    <Button
-                      type="submit"
-                      className="flex-1"
-                      disabled={isLoading}
-                    >
-                      {isLoading ? "Creating account..." : "Complete Registration"}
+                    <Button type="submit" disabled={isLoading}>
+                      {isLoading ? "Creating Account..." : "Complete Registration"}
                     </Button>
                   </div>
                 </div>
-              ) : (
-                <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? "Creating account..." : "Register"}
-                </Button>
+              )}
+              {!addBusiness && (
+                <div className="space-y-4">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={handlePrevStep}
+                    disabled={isLoading}
+                    className="mr-4"
+                  >
+                    Back
+                  </Button>
+                  <Button type="submit" disabled={isLoading}>
+                    {isLoading ? "Creating Account..." : "Complete Registration"}
+                  </Button>
+                </div>
               )}
             </>
           )}
