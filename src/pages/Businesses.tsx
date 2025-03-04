@@ -78,7 +78,7 @@ const Businesses = () => {
           Browse our comprehensive directory of registered businesses across various industries
         </p>
       </div>
-
+      
       <div className="max-w-4xl mx-auto mb-12">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1 relative">
@@ -110,7 +110,7 @@ const Businesses = () => {
           <p className="text-lg text-gray-600">No businesses found matching your search criteria.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredBusinesses.map((business) => (
             <Card key={business.id} className="flex flex-col">
               <CardHeader>
@@ -126,21 +126,21 @@ const Businesses = () => {
                   <MapPin className="h-4 w-4" />
                   {business.location}
                 </CardDescription>
-              </CardHeader>
-              <CardContent>
+            </CardHeader>
+            <CardContent>
                 <p className="text-gray-600 line-clamp-3">{business.description}</p>
-              </CardContent>
+            </CardContent>
               <CardFooter className="mt-auto pt-4">
                 <Button asChild variant="outline" className="w-full">
                   <Link to={`/businesses/${business.id}`}>
                     View Details
                     <ChevronRight className="ml-2 h-4 w-4" />
                   </Link>
-                </Button>
-              </CardFooter>
-            </Card>
-          ))}
-        </div>
+              </Button>
+            </CardFooter>
+          </Card>
+        ))}
+      </div>
       )}
     </div>
   );
